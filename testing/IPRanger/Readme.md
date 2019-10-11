@@ -53,9 +53,9 @@ letters{n}-numbers{k} so the exact number of unique users is pow(26,n)*pow(10,k)
 
 ### Test1 - IPv4 and IPv6 compatible
 #### Scenario:
-This test aims to create a small volume of IP addresses (6760) that frequently change users such as in  the case where an IP address is freed and allocated to a different user.
+This test aims to create a small volume of IP addresses that frequently change users such as in  the case where an IP address is freed and allocated to a different user.
 Test1 is about the rotation of users, so the last owner of each address should be the correct.
-The created addresses are unique and have a mask of /32 or /128 o **the case of overlapping subnets is not covered**.
+The created addresses are unique and have a mask of /32 or /128 so **the case of overlapping subnets is not covered**.
 
 #### Dataset File:
 

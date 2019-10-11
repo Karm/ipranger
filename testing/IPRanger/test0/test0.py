@@ -29,6 +29,10 @@ MAX_IPV6 = ipaddress.IPv6Address._ALL_ONES  # 2 ** 128 - 1
 ## Test0 tests only the switching of address,so the last address of each user should be the correct.
 ## The created addresses are unique and have a mask of /32 or /128 so **the case of subnets is not covered**.
 
+# Arguments:
+# letters: number of letters that the user id will contain, # numbers: respective numbers for the user id
+# n: number of iterations (switches of ip address per user, dataset: the output dataset file, testfile: the output test file
+# version: 4 for IPv4 and 6 for IPv6 
 def test0(letters, numbers,n,dataset,testfile,version):
 
 	# set that holds the generated IP addresses
@@ -55,7 +59,7 @@ def test0(letters, numbers,n,dataset,testfile,version):
 				# pick a user
 				id_=ids[i]
 			
-				# we want to generate unique IP addresses in order to avoid collisions (same IP address to N different users)
+				# generate unique IP addresses in order to avoid collisions (same IP address to N different users)
 				while True: 
 					# if version equals 4, generate an IPv4 address
 					if version == 4:				
@@ -68,7 +72,7 @@ def test0(letters, numbers,n,dataset,testfile,version):
 					old_len = len(ips)
 					# update the set 
 					ips.add(ip)
-					# if the new size is larger, then we have a unique IP address, else try again
+					# if the new size is larger, then this is a unique IP address, else generate new one
 					if len(ips)>old_len:
 						break
 						
@@ -84,14 +88,14 @@ def test0(letters, numbers,n,dataset,testfile,version):
 if __name__ == "__main__":	
 
 	# Small Dataset
-	## the total number of combinations is pow(26,<num_of_letters>:2)*pow(10,<num_of_numbers>:1) = 6760	
-	## We are creating 67600 touples of <user,address> as each user is changing 10 times IP address. 
+	## The total number of combinations is pow(26,<num_of_letters>:2)*pow(10,<num_of_numbers>:1) = 6760	
+	## There are created 67600 touples of <user,address> as each user is changing 10 times IP address. 
 	test0(2,1,10,"dataset0v4_small.txt","test0v4_small.txt",4)
 	test0(2,1,10,"dataset0v6_small.txt","test0v6_small.txt",6)
 
 	# Large Dataset
-	## the total number of combinations is pow(26,<num_of_letters>:2)*pow(10,<num_of_numbers>:3) = 676000	
-	## We are creating 6760000 touples of <user,address> as each user is changing 10 times IP address. 
+	## The total number of combinations is pow(26,<num_of_letters>:2)*pow(10,<num_of_numbers>:3) = 676000	
+	## There are created 6760000 touples of <user,address> as each user is changing 10 times IP address. 
 	test0(2,3,10,"dataset0v4_large.txt","test0v4.txt_large",4)
 	test0(2,3,10,"dataset0v6_large.txt","test0v6.txt_large",6)
 
