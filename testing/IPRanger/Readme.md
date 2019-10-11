@@ -22,39 +22,63 @@ Example of a failure:
 ! Address: 16ee:cd3f:445e:906f:ffff:ffff:ffff:ffff Found data: XXX-16 expected data: XXX-1
 ```
 
-### Test0 - contains both IPv4 and IPv6
+### Test0 - IPv4 and IPv6 compatible
 #### Scenario:
-This test creates a small volume of users (6760) that are frequently assigned random address.
-In more detail, it tests only the assignment of address, so the last address of each user should be the correct.
-The created addresses are unique and have a mask of /32 for IPv4 or /128 for IPv6 so **we are not covering the case of subnets**.
+This test creates a number of users that are iteratively assigned random unique address.
+The test simulates the rapid assignment of different addresses to users. ~~The last address of each user should be the correct.~~ (See **Disclaimer in Test File**)
+
+The generated addresses are unique and have a mask of /32 for IPv4 or /128 for IPv6 so **the case of overlapping subnets is not covered**.
 
 #### Dataset File:
-We are creating 67600 tuples of <user:address> so each user in average changes 10 times address.
 
-Lines =  135200 (2 lines/tuple)
+Can be generated either for IPv4 or IPv6 addresses
+
+Contains tuples of `user:address `in the form:
+
+``` 
+user_id
+IP address
+```
+
+The generated `user_ids` are in the form:
+
+```
+letters{n}-numbers{k} so the exact number of unique users is pow(26,n)*pow(10,k)
+```
 
 #### Test File:
-The last address of each user.
+*In the current version* the file contains the last address of each user.
 
-Lines = the users that are assigned addresses are random so it varies.
+**Disclaimer:** the current key for `ipranger` is the `IP address` and not the `user_id`. Since the generated IP addresses are unique, any tuple from the dataset file can be used for testing purposes.
 
-### Test1 - contains both IPv4 and IPv6
+### Test1 - IPv4 and IPv6 compatible
 #### Scenario:
-This test aims to create a small volume of IP addresses (6760) that frequently change users - the case where an IP address is freed and allocated to a different user.
+This test aims to create a small volume of IP addresses (6760) that frequently change users such as in  the case where an IP address is freed and allocated to a different user.
 Test1 is about the rotation of users, so the last owner of each address should be the correct.
-The created addresses are unique and have a mask of /32 or /128 so we are not covering the case of subnets.
+The created addresses are unique and have a mask of /32 or /128 o **the case of overlapping subnets is not covered**.
 
 #### Dataset File:
 
-Lines: 6760 tuples * 2 lines/tuple  + 10,000 exchanges * 4 lines/exchange = 53520
+Can be generated either for IPv4 or IPv6 addresses
 
-There is the initial arrangement of the tuples and 10,000 simulated (ex)changes of IPs.
+Contains tuples of `user:address `in the form:
+
+```
+user_id
+IP address
+```
+
+The generated `user_ids` are in the form:
+
+```
+letters{n}-numbers{k} so the exact number of unique users is pow(26,n)*pow(10,k)
+```
+
+Contains a number of swaps (new random assignments) of existing IP addresses to users.
 
 #### Test File:
 
-Lines: 6760 tuples * 2 lines/tuple
-
-The last address of each user.
+Contains the last address of each user.
 
 ### Test2 - contains only IPv4
 
