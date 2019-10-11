@@ -84,8 +84,8 @@ def test0(letters, numbers,n,dataset,testfile,version):
 if __name__ == "__main__":	
 
 	# Small Dataset
-	## the total number of combinations is pow(26,<num_of_letters>:2)*pow(10,<num_of_numbers>:3) = 676000	
-	## We are creating 6760000 touples of <user,address> as each user is changing 10 times IP address. 
+	## the total number of combinations is pow(26,<num_of_letters>:2)*pow(10,<num_of_numbers>:1) = 6760	
+	## We are creating 67600 touples of <user,address> as each user is changing 10 times IP address. 
 	test0(2,1,10,"dataset0v4_small.txt","test0v4_small.txt",4)
 	test0(2,1,10,"dataset0v6_small.txt","test0v6_small.txt",6)
 
