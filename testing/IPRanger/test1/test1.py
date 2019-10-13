@@ -37,7 +37,7 @@ def test1(letters, numbers,n,dataset,testfile,version):
 
 	# open two files for writing: input dataset and test file
 	with open(dataset,"w") as d,open(testfile,"w") as t:
-		print("\n[+] Generate user IDs") 
+		print("\n[+] Generating user IDs") 
 		# generate all the possible combinations of #letters with a vocabulary of ascii lowercase charactes
 		for letter in product(string.ascii_lowercase, repeat=letters):
 			x = ''.join(letter)
@@ -48,7 +48,7 @@ def test1(letters, numbers,n,dataset,testfile,version):
 				ids.append(x+"-"+str(i))
 
 		# for every user generate an IP address
-		print("[+] Generate initial matching") 
+		print("[+] Generating initial matching") 
 		for i in tqdm(range(len(ids))):
 			# generate unique IP addresses in order to avoid collisions (same IP address to N different users)
 			while True: 

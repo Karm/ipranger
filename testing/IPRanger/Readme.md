@@ -80,36 +80,21 @@ Contains a number of swaps (new random assignments) of existing IP addresses to 
 
 Contains the last address of each user.
 
-### Test2 - contains only IPv4
+### Test2 - IPv4 and IPv6 compatible
 
 #### Scenario
 
-This test aims to check for IPs that coexist in network segments.
-For example an IP that is provided by a Telco and exists also in an ISP.
+This test aims to check for IP addresses that coexist in network segments.
+For example an IP address that is provided by a Telco and exists in a subnet that is leased by an ISP.
 
-Assume that all networks are smaller that /8 and that 1 in 4 addresses will be a host (/32)
-
-To further elaborate, a dataset is created in the beginning that contains IP networks and hosts.
+The initial dataset contains both IP networks and hosts.
 Based on this dataset, a mutation takes place and new hosts are added to the dataset. These hosts come from the networks that are already present. For example if there is a network 192.168.1.0/24, the IP address 192.167.1.15 might be added in this step.
 
- Last but not least, the test file is created. For this to be implemented, the supernets are located and for each one, its subnets and the hosts that are already present in the dataset are ruled out (red address space) . The final result is a set of IP addresses that belong to the supernet and are not yet assigned to a subnet (white address space).
+For the generated test file, the supernets are located and for each one, its subnets and the hosts that are already present in the dataset are ruled out . The final result is a set of IP addresses that belong to the supernet and are not yet assigned to a subnet.
 
-#### Dataset Files:
-
-Initial dataset
-
-Mutated dataset
-
-#### Test File:
-
-Contains the mutated hosts as is.
-
-### Test3 - Performance - contains only IPv4
+### Test3 - Performance Test - IPv4 and IPv6 compatible
 
 ### Scenario
 
-Dataset includes large names(less than 64 chars) in order to measure the scalability. Similar to Test0. Will be created an equivalent to Test2 (with overlapping networks)
+The dataset includes large names(less than 64 chars) in order to measure the scalability and the memory management of ipranger.  This test has similar functionality to Test0.
 
-### Changelog
-
-20191004 - Small Fix in Test2 - print network and user in correct order @testfile
