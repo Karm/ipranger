@@ -17,6 +17,7 @@
 import string
 import random
 import ipaddress
+import netaddr
 from tqdm import tqdm
 
 MAX_IPV4 = ipaddress.IPv4Address._ALL_ONES  # 2 ** 32 - 1

@@ -229,14 +229,14 @@ def gen_test(dataset,test,version):
 
 if __name__ == "__main__":
 
-	init_dataset(2,1,"dataset2v4_small.txt",4)
+	init_dataset(1,1,"dataset2v4_small.txt",4)
 	gen_test("dataset2v4_small.txt","test2v4_small.txt",4)
-	init_dataset(2,1,"dataset2v6_small.txt",6)
+	init_dataset(1,1,"dataset2v6_small.txt",6)
 	gen_test("dataset2v6_small.txt","test2v6_small.txt",6)
 
-	init_dataset(2,3,"dataset2v4_large.txt",4)
+	init_dataset(2,1,"dataset2v4_large.txt",4)
 	gen_test("dataset2v4_large.txt","test2v4_large.txt",4)
-	init_dataset(2,3,"dataset2v6_large.txt",6)
+	init_dataset(2,1,"dataset2v6_large.txt",6)
 	gen_test("dataset2v6_large.txt","test2v6_large.txt",6)
 
 
