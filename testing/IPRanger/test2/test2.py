@@ -37,6 +37,9 @@ def init_dataset(letters,numbers,dataset,version):
 	# list tha holds the generated user IDs
 	ids = []
 
+	# create a set to store unique ips
+	ips = set()
+
 
 	# counter for the generated ip addresses
 	j = 0
@@ -54,27 +57,32 @@ def init_dataset(letters,numbers,dataset,version):
 		for i in tqdm(range(len(ids))):
 			
 			random.seed(datetime.now())
+			old_length = len(ips)
+			# guarantee uniqueness in the gnerated addresses
+			while (old_length == len(ips)):
 
-			# generate with 25% prob a host and with 75% prob a network
-			if version == 4:
-				if i%4 == 0:
-					mask = 32
-				else:
-					mask = random.randint(1,31)
-				# generate 32 random bits
-				addr = str(ipaddress.IPv4Address._string_from_ip_int(random.randint(0, MAX_IPV4)))
+				# generate with 25% prob a host and with 75% prob a network
+				if version == 4:
+					if i%4 == 0:
+						mask = 32
+					else:
+						mask = random.randint(1,31)
+					# generate 32 random bits
+					addr = str(ipaddress.IPv4Address._string_from_ip_int(random.randint(0, MAX_IPV4)))
 
-			elif version == 6:
-				if i%4 == 0:
-					mask = 128
-				else:
-					mask = random.randint(100,127)
-				addr = str(ipaddress.IPv6Address._string_from_ip_int(random.randint(0, MAX_IPV6)))
-			
-			# create a sting that holds the generated address and the random mask
-			addr_str = str(addr)+"/"+str(mask)
-			# get the network equivalent address, if this is a host address, it remains the same
-			ip = ipaddress.ip_interface(unicode(addr_str)).network
+				elif version == 6:
+					if i%4 == 0:
+						mask = 128
+					else:
+						mask = random.randint(100,127)
+					addr = str(ipaddress.IPv6Address._string_from_ip_int(random.randint(0, MAX_IPV6)))
+				
+				# create a sting that holds the generated address and the random mask
+				addr_str = str(addr)+"/"+str(mask)
+				# get the network equivalent address, if this is a host address, it remains the same
+				ip = ipaddress.ip_interface(unicode(addr_str)).network
+				ips.add(ip)
+
 			# write output to the dataset
 			d.write(ids[i]+"\n"+str(ip)+"\n")
 
@@ -125,7 +133,7 @@ def init_dataset(letters,numbers,dataset,version):
 
 					x = list(generated)
 					for k in range(len(generated)):
-						d.write("generated-"+str(j)+"\n"+str(x[k])+"/32"+"\n")
+						d.write("generated-"+str(j)+"\n"+str(x[k])+"/128"+"\n")
 						j = j + 1
 
 
@@ -141,7 +149,7 @@ def gen_test(dataset,test,version):
 		users = []
 		ips = []
 		hosts = set()
-		# get only networks and not hosts (>/32)
+		# get only networks and not hosts (!= /32 or != /128)
 		for i in range(0,len(lines),2):
 			user = lines[i].rstrip("\n")
 			ip = lines[i+1].rstrip("\n")
@@ -154,11 +162,10 @@ def gen_test(dataset,test,version):
 				users.append(user)	
 
 			else:
-				# add host address to set for later usage
+				# add host address to set for later comparison
 				hosts.add(ipaddress.ip_address(unicode(addr)))
 				# host addresses are written as is to the test file
 				t.write(ip + "\n" + user + "\n")
-		#print(hosts)
 
 		# for all the networks that exist in the dataset
 		print("[+] Creating Test Cases")
@@ -167,17 +174,15 @@ def gen_test(dataset,test,version):
 			blacklist = []
 
 			for j in range(i+1,len(ips)):
+				# if the next items in the list are a subnet of the current network, add them to blacklist in order not to sample IP addresses from this network area
 				if ips[j].subnet_of(ips[i]) == True:
-				
-				#if netaddr.IPNetwork(str(ips[j])) in netaddr.IPNetwork(str(ips[i])):
-
 					blacklist.append(ips[j])
 
 			# generate random addresses
 			if (len(blacklist)>0):
 				number_of_addresses = ips[i].num_addresses
 
-
+				# add at most 2 addresses in the test - many are added during the previous generation, this number can be increased for more test cases
 				if int(number_of_addresses) > 16:
 					to_be_generated = 2
 				# use a set in order to guarantee uniqueness 
@@ -189,26 +194,28 @@ def gen_test(dataset,test,version):
 					elif version == 6:
 						generated.add(ipaddress.IPv6Address(ips[i].network_address + bits))
 				# convert to a list
-				x = list(generated)
-				
+				x = list(generated)				
 			
 				for k in range(len(x)):
+					# generate unique host address in the subnet, try at most 3 times to avoid endless loops
 					tries = 0 
 					uniq = False
 					while not uniq and tries < 3:
 						tries = tries + 1
 						uniq = True
+						# test if address is in a subnet that exists in a blacklist
 						for m in range(len(blacklist)):
 							if x[k] in blacklist[m]:
 								uniq = False
 								#print ("IP address exists in a subnet")
 
+						# test if the generated ip address is in the existing hosts
 						if ipaddress.ip_address(x[k]) in hosts:
 							uniq = False
 							#print ("IP address exists in hosts")
 
+						# retry to sample IP address if it is not unique
 						if uniq is False:
-
 							#print("retrying to sample ip")
 							bits = random.getrandbits(ips[i].max_prefixlen - ips[i].prefixlen)
 							if version == 4:
@@ -218,11 +225,12 @@ def gen_test(dataset,test,version):
 							#print("Sampled IP:" +str(x[k]))
 
 					#print("IP does not exist and will be written to file:"+str(users[i])+":"+str(x[k]))
-					
+					# write IP in test file
 					if version == 4:
 						t.write(str(x[k])+"/32"+"\n"+users[i]+"\n")
 					else:
 						t.write(str(x[k])+"/128"+"\n"+users[i]+"\n")
+					# append the generated IPs in the hosts in order not to add them again in later iteration
 					hosts = hosts.union(set(x))
 
 
@@ -234,9 +242,9 @@ if __name__ == "__main__":
 	init_dataset(1,1,"dataset2v6_small.txt",6)
 	gen_test("dataset2v6_small.txt","test2v6_small.txt",6)
 
-	init_dataset(2,1,"dataset2v4_large.txt",4)
+	init_dataset(2,2,"dataset2v4_large.txt",4)
 	gen_test("dataset2v4_large.txt","test2v4_large.txt",4)
-	init_dataset(2,1,"dataset2v6_large.txt",6)
+	init_dataset(2,2,"dataset2v6_large.txt",6)
 	gen_test("dataset2v6_large.txt","test2v6_large.txt",6)
 
 
