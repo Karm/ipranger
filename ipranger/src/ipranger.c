@@ -45,16 +45,16 @@ extern iprg_stat_t iprg_insert_cidr_identity_pair(const char *CIDR,
 
   char *start_ip = NULL;
   char *end_ip = NULL;
-  char *mask = NULL;
+  char mask = 0;
   ip_range_t ip_range;
 
-  cidr_to_ip(CIDR, &start_ip, &end_ip, &mask, &ip_range, NULL);
+  cidr_to_ip(CIDR, &start_ip, &end_ip, &mask, &ip_range, '\0');
 
 #ifdef DEBUG
   printf("CIDR:     %s\n", CIDR);
   printf("Start:    %s\n", start_ip);
   printf("End:      %s\n", end_ip);
-  printf("Mask:     %s\n", mask);
+  printf("Mask:     %d\n", mask);
   if (ip_range.type == IPv4) {
     printf("Type:     IPv4\n");
   } else {
@@ -174,12 +174,10 @@ extern iprg_stat_t iprg_insert_cidr_identity_pair(const char *CIDR,
   // Remember the mask so as we know what our mask search space is
   MDB_txn *txn_masks;
   MDB_val key_mask, data_mask;
-  char key_mask_k[4];
-  char key_mask_d[4];
-  memset(key_mask_k, 0, sizeof(key_mask_k));
-  memcpy(key_mask_k, mask, strlen(mask) + 1);
-  memset(key_mask_d, 0, sizeof(key_mask_d));
-  memcpy(key_mask_d, mask, strlen(mask) + 1);
+  char key_mask_k[1];
+  char key_mask_d[1];
+  key_mask_k[0] = mask;
+  key_mask_d[0] = mask;
   E(mdb_txn_begin(env, NULL, 0, &txn_masks));
 
   if (ip_range.type == IPv6) {
@@ -272,8 +270,8 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
   MDB_cursor *cursor;
   MDB_cursor *cursor_masks;
 
-  char k_mask_data_r[4];
-  char v_mask_data_r[4];
+  char k_mask_data_r[1];
+  char v_mask_data_r[1];
   MDB_dbi dbi_ipv6_masks;
   MDB_dbi dbi_ipv4_masks;
   MDB_txn *txn_masks;
@@ -303,12 +301,12 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
   MDB_val key_rr, data_rr;
 
   int i = 0;
-  char *masks[IPRANGER_MAX_MASKS];
+  char masks[IPRANGER_MAX_MASKS];
 
   while (((rc = mdb_cursor_get(cursor_masks, &key_mask_r, &data_mask_r,
                                MDB_NEXT)) == 0) &&
          i < IPRANGER_MAX_MASKS) {
-    masks[i] = strdup(key_mask_r.mv_data);
+    masks[i] = ((char *)key_mask_r.mv_data)[0];
     i++;
   }
 
@@ -330,11 +328,11 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
 
   if (family == IPv6) {
     struct in6_addr k_data_rr;
-    for (int j = 0; j < i; j++) {
+    for (int j = i - 1; j >= 0; j--) {
 
       char *start_ip_n = NULL;
       char *end_ip_n = NULL;
-      char *mask_n = NULL;
+      char mask_n = 0;
 
       cursor = NULL;
       ip_range_t ip_range_n;
@@ -365,7 +363,7 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
       } else {
         printf("  Tried to match ");
         ipv6_to_str((const struct in6_addr *)key_rr.mv_data);
-        printf(" key in vain (%s/%s)\n", address, masks[j]);
+        printf(" key in vain (%s/%d)\n", address, masks[j]);
       }
     }
 
@@ -377,11 +375,11 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
   } else if (family == IPv4) {
 
     struct in_addr k_data_rr;
-    for (int j = 0; j < i; j++) {
+    for (int j = i - 1; j >= 0; j--) {
 
       char *start_ip_n = NULL;
       char *end_ip_n = NULL;
-      char *mask_n = NULL;
+      char mask_n = 0;
 
       cursor = NULL;
       ip_range_t ip_range_n;
@@ -412,7 +410,7 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
       } else {
         printf("  Tried to match ");
         ipv4_to_str((const struct in_addr *)key_rr.mv_data);
-        printf(" key in vain (%s/%s)\n", address, masks[j]);
+        printf(" key in vain (%s/%d)\n", address, masks[j]);
       }
     }
 
