@@ -179,19 +179,6 @@ extern iprg_stat_t iprg_get_identity_ip_addrs(struct ip_addr *addresses[],
                                               char *identities[], int length);
 
 /**
- * @brief No idea what Ashur means with this :-)
- *
- * @param address pointer to up to 40 chars long array, e.g.
- * 8078:5a6c:9a02:43cb:ffff:ffff:ffff:ffff Note the library accepts also
- * compressed format, e.g. f2f5:3aa1:d14e:494e::20c8
- * @param identity multiple identities to....what? Check whther they belong ot
- * he IP...?
- *
- * @return RC_SUCCESS or RC_FAILURE
- */
-extern iprg_stat_t iprg_check_ip_range(char *address, int *identity, ...);
-
-/**
  * @brief Should be called after all DB operations.
  */
 extern void iprg_close_DB_env();

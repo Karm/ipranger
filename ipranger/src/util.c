@@ -52,7 +52,7 @@ void ipv6_to_str(const struct in6_addr *addr) {
 }
 
 // TODO: ??? *addr ???
-void ipv4_to_str(const struct in_addr *addr) { printf(inet_ntoa(*addr)); }
+void ipv4_to_str(const struct in_addr *addr) { printf("%s", inet_ntoa(*addr)); }
 
 static int ntop(struct in_addr *ip, char *host, size_t host_size) {
   struct sockaddr_in in;

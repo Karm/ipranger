@@ -54,6 +54,34 @@ void basic_ipv4_test() {
     "Unexpected identity retrieved.");
 }
 
+void complex_ipv4_test() {
+  char *identity_v4 = "10.0.0.1-8";
+  char *cidr_v4 = "10.0.0.1/8";
+  T(RC_SUCCESS == iprg_insert_cidr_identity_pair(cidr_v4, identity_v4),
+    "Inserting identity failed.");
+  identity_v4 = "10.0.0.1-16";
+  cidr_v4 = "10.0.0.1/16";
+  T(RC_SUCCESS == iprg_insert_cidr_identity_pair(cidr_v4, identity_v4),
+    "Inserting identity failed.");
+  identity_v4 = "10.0.0.1-24";
+  cidr_v4 = "10.0.0.1/24";
+  T(RC_SUCCESS == iprg_insert_cidr_identity_pair(cidr_v4, identity_v4),
+    "Inserting identity failed.");
+  identity_v4 = "10.0.0.1-32";
+  cidr_v4 = "10.0.0.1/32";
+  T(RC_SUCCESS == iprg_insert_cidr_identity_pair(cidr_v4, identity_v4),
+    "Inserting identity failed.");
+
+  char retrieved_identity[32] = {0};
+  char *address_v4 = "10.0.0.1";
+
+  T(RC_SUCCESS == iprg_get_identity_str(address_v4, retrieved_identity),
+    "Retrieving identity failed.");
+
+  T(0 == strncmp("10.0.0.1-32", retrieved_identity, 32),
+    "Unexpected identity retrieved.");
+}
+
 int main(void) {
   printf(DB_DIR_MSG "\n");
   remove(DEFAULT_DB_DIR "/data.mdb");
@@ -68,6 +96,7 @@ int main(void) {
   printf("\n");
 
   basic_ipv4_test();
+  complex_ipv4_test();
 
   printf("\n\n");
 

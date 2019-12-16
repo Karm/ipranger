@@ -499,12 +499,6 @@ extern iprg_stat_t iprg_get_identity_ip_addrs(struct ip_addr *addresses[],
   return rc;
 }
 
-extern iprg_stat_t iprg_check_ip_range(char *address, int *identity, ...) {
-  int rc = 0;
-  CHECK(1, "Not implemented.");
-  return RC_FAILURE;
-}
-
 extern void iprg_printf_db_dump() {
   ipv6_db_dump();
   ipv4_db_dump();
