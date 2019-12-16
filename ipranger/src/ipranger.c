@@ -45,7 +45,7 @@ extern iprg_stat_t iprg_insert_cidr_identity_pair(const char *CIDR,
 
   char *start_ip = NULL;
   char *end_ip = NULL;
-  char mask = 0;
+  unsigned char mask = 0;
   ip_range_t ip_range;
 
   cidr_to_ip(CIDR, &start_ip, &end_ip, &mask, &ip_range, '\0');
@@ -270,8 +270,8 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
   MDB_cursor *cursor;
   MDB_cursor *cursor_masks;
 
-  char k_mask_data_r[1];
-  char v_mask_data_r[1];
+  unsigned char k_mask_data_r[1];
+  unsigned char v_mask_data_r[1];
   MDB_dbi dbi_ipv6_masks;
   MDB_dbi dbi_ipv4_masks;
   MDB_txn *txn_masks;
@@ -301,12 +301,12 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
   MDB_val key_rr, data_rr;
 
   int i = 0;
-  char masks[IPRANGER_MAX_MASKS];
+  unsigned char masks[IPRANGER_MAX_MASKS];
 
   while (((rc = mdb_cursor_get(cursor_masks, &key_mask_r, &data_mask_r,
                                MDB_NEXT)) == 0) &&
          i < IPRANGER_MAX_MASKS) {
-    masks[i] = ((char *)key_mask_r.mv_data)[0];
+    masks[i] = ((unsigned char *)key_mask_r.mv_data)[0];
     i++;
   }
 
@@ -332,7 +332,7 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
 
       char *start_ip_n = NULL;
       char *end_ip_n = NULL;
-      char mask_n = 0;
+      unsigned char mask_n = 0;
 
       cursor = NULL;
       ip_range_t ip_range_n;
@@ -379,7 +379,7 @@ extern iprg_stat_t iprg_get_identity_str(const char *address, char *identity) {
 
       char *start_ip_n = NULL;
       char *end_ip_n = NULL;
-      char mask_n = 0;
+      unsigned char mask_n = 0;
 
       cursor = NULL;
       ip_range_t ip_range_n;

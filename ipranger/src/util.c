@@ -72,11 +72,11 @@ static int ntop6(struct in6_addr *ip, char *host, size_t host_size) {
                      host_size, NULL, 0, NI_NUMERICHOST);
 }
 
-int cidr_to_ip(const char *cidr, char **start_ip, char **stop_ip, char *mymask,
-               ip_range_t *ip_range, char default_mask) {
+int cidr_to_ip(const char *cidr, char **start_ip, char **stop_ip, unsigned char *mymask,
+               ip_range_t *ip_range, unsigned char default_mask) {
   char *cidr_tok;
   char *first_ip;
-  char mask;
+  unsigned char mask;
   char *txtmsk = NULL;
   char *saveptr = NULL;
   ip_range_t ip;
