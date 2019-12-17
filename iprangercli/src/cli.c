@@ -61,6 +61,12 @@ int main(int argc, char *argv[]) {
 
   bool read_only = (TEST_REGIME) ? true : false;
 
+/*  if(!TEST_REGIME)
+  {
+    remove(DEFAULT_DB_DIR "/data.mdb");
+    remove(DEFAULT_DB_DIR "/lock.mdb");
+  }*/
+
   T(RC_SUCCESS == iprg_init_DB_env(DEFAULT_DB_DIR, read_only),
     "DB init failed.");
 
@@ -157,7 +163,8 @@ int main(int argc, char *argv[]) {
     }
   }
   // Dump
-  iprg_printf_db_dump();
+  if(TEST_REGIME)
+    iprg_printf_db_dump();
   // Close DB env
   iprg_close_DB_env();
 }

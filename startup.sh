@@ -1,3 +1,4 @@
 #!/bin/bash
 
-sleep infinity
+#sleep infinity
+/bin/bash
