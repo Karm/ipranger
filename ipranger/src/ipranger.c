@@ -521,6 +521,10 @@ void ipv6_db_dump() {
   rc = mdb_dbi_open(txn, IPRANGER_IPv6_DB_NAME, MDB_DUPSORT, &dbi_ipv6);
   CHECK(rc != MDB_NOTFOUND, "No IPv6 DB configured.");
   CHECK(rc == MDB_SUCCESS, "Failed to open IPv6 DB.");
+
+  if (rc != MDB_SUCCESS)
+    return;
+
   E(mdb_cursor_open(txn, dbi_ipv6, &cursor));
 
   printf(
@@ -556,6 +560,10 @@ void ipv4_db_dump() {
   rc = mdb_dbi_open(txn, IPRANGER_IPv4_DB_NAME, MDB_DUPSORT, &dbi_ipv4);
   CHECK(rc != MDB_NOTFOUND, "No IPv4 DB configured.");
   CHECK(rc == MDB_SUCCESS, "Failed to open IPv4 DB.");
+
+  if (rc != MDB_SUCCESS)
+    return;
+
   E(mdb_cursor_open(txn, dbi_ipv4, &cursor));
 
   printf(
